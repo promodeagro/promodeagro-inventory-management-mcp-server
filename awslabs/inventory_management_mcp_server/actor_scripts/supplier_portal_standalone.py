@@ -37,33 +37,33 @@ class SupplierPortalStandalone:
     def print_header(self, title: str):
         """Print formatted header"""
         print("\n" + "=" * 80)
-        print(f"🏪 {title}")
+        print(f"[SUPPLIER] {title}")
         print("=" * 80)
         
     def print_success(self, message: str):
         """Print success message"""
-        print(f"✅ {message}")
+        print(f"[SUCCESS] {message}")
         
     def print_error(self, message: str):
         """Print error message"""
-        print(f"❌ {message}")
+        print(f"[ERROR] {message}")
         
     def print_info(self, message: str):
         """Print info message"""
-        print(f"ℹ️  {message}")
+        print(f"[INFO]  {message}")
         
     def print_warning(self, message: str):
         """Print warning message"""
-        print(f"⚠️  {message}")
+        print(f"[INTERRUPTED]  {message}")
         
     def test_aws_connection(self) -> bool:
         """Test AWS connection and credentials"""
         try:
             sts = boto3.client('sts', region_name=self.region_name)
             identity = sts.get_caller_identity()
-            print(f"🔐 AWS Identity: {identity['Arn']}")
-            print(f"🏢 AWS Account: {identity['Account']}")
-            print(f"🌍 AWS Region: {self.region_name}")
+            print(f"[SECURE] AWS Identity: {identity['Arn']}")
+            print(f"[ACCOUNT] AWS Account: {identity['Account']}")
+            print(f"[REGION] AWS Region: {self.region_name}")
             return True
         except Exception as e:
             self.print_error(f"AWS connection failed: {str(e)}")
@@ -77,11 +77,11 @@ class SupplierPortalStandalone:
         if not self.test_aws_connection():
             return False
             
-        print("\n🔐 Please enter your supplier credentials:")
-        print("💡 Demo credentials: supplier1 / supplier123")
+        print("\n[SECURE] Please enter your supplier credentials:")
+        print("[NOTE] Demo credentials: supplier1 / supplier123")
         
-        supplier_id = input("\n🏪 Supplier ID: ").strip()
-        password = getpass.getpass("🔒 Password: ").strip()
+        supplier_id = input("\n[SUPPLIER] Supplier ID: ").strip()
+        password = getpass.getpass("[PASSWORD] Password: ").strip()
         
         if not supplier_id or not password:
             self.print_error("Supplier ID and password are required")
@@ -174,21 +174,21 @@ class SupplierPortalStandalone:
             self.print_header("SUPPLIER PORTAL DASHBOARD")
             
             if self.current_supplier:
-                print(f"🏪 Supplier: {self.current_supplier.get('name', 'Unknown')}")
-                print(f"🆔 Supplier ID: {self.supplier_id}")
-                print(f"📧 Email: {self.current_supplier.get('email', 'Unknown')}")
-                print(f"📅 Login Time: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+                print(f"[SUPPLIER] Supplier: {self.current_supplier.get('name', 'Unknown')}")
+                print(f"[ID] Supplier ID: {self.supplier_id}")
+                print(f"[EMAIL] Email: {self.current_supplier.get('email', 'Unknown')}")
+                print(f"[DATE] Login Time: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
             
-            print("\n📋 Available Operations:")
-            print("1. 📋 Order Management")
-            print("2. 📦 Inventory Updates")
-            print("3. 🚚 Delivery Coordination")
-            print("4. 💰 Invoice Management")
-            print("5. 📊 Performance Review")
-            print("6. 🔐 Logout")
-            print("0. 🚪 Exit")
+            print("\n[CLIPBOARD] Available Operations:")
+            print("1. [CLIPBOARD] Order Management")
+            print("2. [ORDER] Inventory Updates")
+            print("3. [DELIVERY] Delivery Coordination")
+            print("4. [PRICE] Invoice Management")
+            print("5. [TRACK] Performance Review")
+            print("6. [SECURE] Logout")
+            print("0. [EXIT] Exit")
             
-            choice = input("\n🎯 Select operation (0-6): ").strip()
+            choice = input("\n[TARGET] Select operation (0-6): ").strip()
             
             if choice == '1':
                 self.order_management_menu()
@@ -215,13 +215,13 @@ class SupplierPortalStandalone:
         while True:
             self.clear_screen()
             self.print_header("ORDER MANAGEMENT")
-            print("1. 📋 View Purchase Orders")
-            print("2. ✅ Confirm Order Acceptance")
-            print("3. 📝 Update Order Status")
-            print("4. 📊 Order History")
-            print("5. 🔙 Back to Main Menu")
+            print("1. [CLIPBOARD] View Purchase Orders")
+            print("2. [SUCCESS] Confirm Order Acceptance")
+            print("3. [GENERATE] Update Order Status")
+            print("4. [TRACK] Order History")
+            print("5. [BACK] Back to Main Menu")
             
-            choice = input("\n🎯 Select operation (1-5): ").strip()
+            choice = input("\n[TARGET] Select operation (1-5): ").strip()
             
             if choice == '1':
                 self.view_purchase_orders()
@@ -254,7 +254,7 @@ class SupplierPortalStandalone:
                 input("Press Enter to continue...")
                 return
                 
-            print(f"📋 Your Purchase Orders ({len(supplier_orders)} orders):")
+            print(f"[CLIPBOARD] Your Purchase Orders ({len(supplier_orders)} orders):")
             print("-" * 100)
             print(f"{'PO ID':<20} {'Order Date':<15} {'Total Amount':<15} {'Status':<15} {'Delivery Date':<15}")
             print("-" * 100)
@@ -274,14 +274,14 @@ class SupplierPortalStandalone:
                 status = po.get('status', 'UNKNOWN')
                 status_counts[status] = status_counts.get(status, 0) + 1
                 
-            print(f"\n📊 Order Status Breakdown:")
+            print(f"\n[TRACK] Order Status Breakdown:")
             for status, count in status_counts.items():
                 print(f"  • {status}: {count} orders")
                 
             # Show pending orders
             pending_orders = [po for po in supplier_orders if po.get('status') == 'PENDING']
             if pending_orders:
-                print(f"\n⚠️ Pending Orders Requiring Action:")
+                print(f"\n[INTERRUPTED] Pending Orders Requiring Action:")
                 for po in pending_orders:
                     print(f"  • {po.get('poId')} - Amount: {po.get('totalAmount')}")
                     
@@ -309,11 +309,11 @@ class SupplierPortalStandalone:
                 input("Press Enter to continue...")
                 return
                 
-            print("📋 Pending Orders for Acceptance:")
+            print("[CLIPBOARD] Pending Orders for Acceptance:")
             for i, po in enumerate(pending_orders, 1):
                 print(f"{i}. {po.get('poId')} - Amount: {po.get('totalAmount')} - Date: {po.get('orderDate', 'N/A')[:10]}")
                 
-            order_choice = input("\n🎯 Select order number to accept: ").strip()
+            order_choice = input("\n[TARGET] Select order number to accept: ").strip()
             
             try:
                 order_index = int(order_choice) - 1
@@ -321,14 +321,14 @@ class SupplierPortalStandalone:
                     selected_po = pending_orders[order_index]
                     po_id = selected_po['poId']
                     
-                    print(f"\n📋 Order Details:")
+                    print(f"\n[CLIPBOARD] Order Details:")
                     print(f"  • PO ID: {po_id}")
                     print(f"  • Amount: {selected_po.get('totalAmount')}")
                     print(f"  • Order Date: {selected_po.get('orderDate', 'N/A')[:10]}")
                     print(f"  • Expected Delivery: {selected_po.get('expectedDeliveryDate', 'N/A')[:10]}")
                     
                     # Confirm acceptance
-                    confirm = input("\n❓ Confirm acceptance of this order? (yes/no): ").strip().lower()
+                    confirm = input("\n[CONFIRM] Confirm acceptance of this order? (yes/no): ").strip().lower()
                     
                     if confirm == 'yes':
                         # Update order status
@@ -368,13 +368,13 @@ class SupplierPortalStandalone:
         while True:
             self.clear_screen()
             self.print_header("INVENTORY UPDATES")
-            print("1. 📦 Update Stock Availability")
-            print("2. 🏷️ Update Product Catalog")
-            print("3. 💰 Update Pricing")
-            print("4. 📊 Inventory Reports")
-            print("5. 🔙 Back to Main Menu")
+            print("1. [ORDER] Update Stock Availability")
+            print("2. [CATEGORY] Update Product Catalog")
+            print("3. [PRICE] Update Pricing")
+            print("4. [TRACK] Inventory Reports")
+            print("5. [BACK] Back to Main Menu")
             
-            choice = input("\n🎯 Select operation (1-5): ").strip()
+            choice = input("\n[TARGET] Select operation (1-5): ").strip()
             
             if choice == '1':
                 self.update_stock_availability()
@@ -395,13 +395,13 @@ class SupplierPortalStandalone:
         while True:
             self.clear_screen()
             self.print_header("DELIVERY COORDINATION")
-            print("1. 📅 Schedule Deliveries")
-            print("2. 📍 Provide Tracking Information")
-            print("3. 📊 Update Delivery Status")
-            print("4. 📋 Delivery History")
-            print("5. 🔙 Back to Main Menu")
+            print("1. [DATE] Schedule Deliveries")
+            print("2. [ADDRESS] Provide Tracking Information")
+            print("3. [TRACK] Update Delivery Status")
+            print("4. [CLIPBOARD] Delivery History")
+            print("5. [BACK] Back to Main Menu")
             
-            choice = input("\n🎯 Select operation (1-5): ").strip()
+            choice = input("\n[TARGET] Select operation (1-5): ").strip()
             
             if choice == '1':
                 self.schedule_deliveries()
@@ -423,12 +423,12 @@ class SupplierPortalStandalone:
             self.clear_screen()
             self.print_header("INVOICE MANAGEMENT")
             print("1. 📄 Submit Invoices")
-            print("2. 💰 Track Payment Status")
-            print("3. 📊 Payment History")
-            print("4. 📋 Credit Management")
-            print("5. 🔙 Back to Main Menu")
+            print("2. [PRICE] Track Payment Status")
+            print("3. [TRACK] Payment History")
+            print("4. [CLIPBOARD] Credit Management")
+            print("5. [BACK] Back to Main Menu")
             
-            choice = input("\n🎯 Select operation (1-5): ").strip()
+            choice = input("\n[TARGET] Select operation (1-5): ").strip()
             
             if choice == '1':
                 self.submit_invoices()
@@ -449,13 +449,13 @@ class SupplierPortalStandalone:
         while True:
             self.clear_screen()
             self.print_header("PERFORMANCE REVIEW")
-            print("1. 📊 View Performance Metrics")
-            print("2. 📝 Respond to Feedback")
-            print("3. 📋 Update Compliance Documents")
-            print("4. 📈 Performance Analytics")
-            print("5. 🔙 Back to Main Menu")
+            print("1. [TRACK] View Performance Metrics")
+            print("2. [GENERATE] Respond to Feedback")
+            print("3. [CLIPBOARD] Update Compliance Documents")
+            print("4. [REPORT] Performance Analytics")
+            print("5. [BACK] Back to Main Menu")
             
-            choice = input("\n🎯 Select operation (1-5): ").strip()
+            choice = input("\n[TARGET] Select operation (1-5): ").strip()
             
             if choice == '1':
                 self.view_performance_metrics()
@@ -624,7 +624,7 @@ class SupplierPortalStandalone:
             self.show_main_menu()
             
         except KeyboardInterrupt:
-            self.print_info("\n⚠️  System interrupted by user")
+            self.print_info("\n[INTERRUPTED]  System interrupted by user")
         except Exception as e:
             self.print_error(f"Unexpected error: {str(e)}")
         finally:

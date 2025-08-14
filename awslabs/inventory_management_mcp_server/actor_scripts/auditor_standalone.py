@@ -40,33 +40,33 @@ class AuditorStandalone:
     def print_header(self, title: str):
         """Print formatted header"""
         print("\n" + "=" * 80)
-        print(f"🔍 {title}")
+        print(f"[AUDIT] {title}")
         print("=" * 80)
         
     def print_success(self, message: str):
         """Print success message"""
-        print(f"✅ {message}")
+        print(f"[SUCCESS] {message}")
         
     def print_error(self, message: str):
         """Print error message"""
-        print(f"❌ {message}")
+        print(f"[ERROR] {message}")
         
     def print_info(self, message: str):
         """Print info message"""
-        print(f"ℹ️  {message}")
+        print(f"[INFO]  {message}")
         
     def print_warning(self, message: str):
         """Print warning message"""
-        print(f"⚠️  {message}")
+        print(f"[INTERRUPTED]  {message}")
         
     def test_aws_connection(self) -> bool:
         """Test AWS connection and credentials"""
         try:
             sts = boto3.client('sts', region_name=self.region_name)
             identity = sts.get_caller_identity()
-            print(f"🔐 AWS Identity: {identity['Arn']}")
-            print(f"🏢 AWS Account: {identity['Account']}")
-            print(f"🌍 AWS Region: {self.region_name}")
+            print(f"[SECURE] AWS Identity: {identity['Arn']}")
+            print(f"[ACCOUNT] AWS Account: {identity['Account']}")
+            print(f"[REGION] AWS Region: {self.region_name}")
             return True
         except Exception as e:
             self.print_error(f"AWS connection failed: {str(e)}")
@@ -80,11 +80,11 @@ class AuditorStandalone:
         if not self.test_aws_connection():
             return False
             
-        print("\n🔐 Please enter your credentials:")
-        print("💡 Demo credentials: auditor / auditor123")
+        print("\n[SECURE] Please enter your credentials:")
+        print("[NOTE] Demo credentials: auditor / auditor123")
         
-        username = input("\n👤 Username: ").strip()
-        password = getpass.getpass("🔒 Password: ").strip()
+        username = input("\n[USER] Username: ").strip()
+        password = getpass.getpass("[PASSWORD] Password: ").strip()
         
         if not username or not password:
             self.print_error("Username and password are required")
@@ -170,22 +170,22 @@ class AuditorStandalone:
             self.print_header("AUDITOR DASHBOARD")
             
             if self.current_user:
-                print(f"👤 User: {self.current_user.get('name', 'Unknown')}")
-                print(f"🔍 Role: {self.current_user.get('role', 'Unknown')}")
-                print(f"📧 Email: {self.current_user.get('email', 'Unknown')}")
-                print(f"📅 Login Time: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+                print(f"[USER] User: {self.current_user.get('name', 'Unknown')}")
+                print(f"[AUDIT] Role: {self.current_user.get('role', 'Unknown')}")
+                print(f"[EMAIL] Email: {self.current_user.get('email', 'Unknown')}")
+                print(f"[DATE] Login Time: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
             
-            print("\n📋 Available Operations:")
-            print("1. 🔍 Transaction Verification")
-            print("2. ✅ Compliance Checking")
-            print("3. 📦 Inventory Verification")
-            print("4. 📊 Report Generation")
-            print("5. 🔄 Process Review")
-            print("6. 📈 Audit Analytics")
-            print("7. 🔐 Logout")
-            print("0. 🚪 Exit")
+            print("\n[CLIPBOARD] Available Operations:")
+            print("1. [AUDIT] Transaction Verification")
+            print("2. [SUCCESS] Compliance Checking")
+            print("3. [ORDER] Inventory Verification")
+            print("4. [TRACK] Report Generation")
+            print("5. [FLOW] Process Review")
+            print("6. [REPORT] Audit Analytics")
+            print("7. [SECURE] Logout")
+            print("0. [EXIT] Exit")
             
-            choice = input("\n🎯 Select operation (0-7): ").strip()
+            choice = input("\n[TARGET] Select operation (0-7): ").strip()
             
             if choice == '1':
                 self.transaction_verification_menu()
@@ -214,13 +214,13 @@ class AuditorStandalone:
         while True:
             self.clear_screen()
             self.print_header("TRANSACTION VERIFICATION")
-            print("1. 💰 Verify Cash Collections")
-            print("2. 📦 Verify Order Transactions")
-            print("3. 📊 Review Transaction History")
-            print("4. ⚠️ Flag Suspicious Transactions")
-            print("5. 🔙 Back to Main Menu")
+            print("1. [PRICE] Verify Cash Collections")
+            print("2. [ORDER] Verify Order Transactions")
+            print("3. [TRACK] Review Transaction History")
+            print("4. [INTERRUPTED] Flag Suspicious Transactions")
+            print("5. [BACK] Back to Main Menu")
             
-            choice = input("\n🎯 Select operation (1-5): ").strip()
+            choice = input("\n[TARGET] Select operation (1-5): ").strip()
             
             if choice == '1':
                 self.verify_cash_collections()
@@ -251,7 +251,7 @@ class AuditorStandalone:
                 input("Press Enter to continue...")
                 return
                 
-            print(f"💰 Recent Cash Collections ({len(collections)} records):")
+            print(f"[PRICE] Recent Cash Collections ({len(collections)} records):")
             print("-" * 100)
             print(f"{'Collection ID':<20} {'Rider ID':<15} {'Amount':<12} {'Method':<10} {'Status':<12} {'Date':<20}")
             print("-" * 100)
@@ -270,7 +270,7 @@ class AuditorStandalone:
             total_amount = sum(Decimal(str(collection.get('amountCollected', 0))) for collection in collections)
             completed_collections = [c for c in collections if c.get('status') == 'COMPLETED']
             
-            print(f"\n📊 Verification Summary:")
+            print(f"\n[TRACK] Verification Summary:")
             print(f"  • Total Collections: {len(collections)}")
             print(f"  • Completed Collections: {len(completed_collections)}")
             print(f"  • Total Amount Collected: {total_amount}")
@@ -285,11 +285,11 @@ class AuditorStandalone:
                     issues.append(f"Invalid payment method: {collection.get('collectionId')}")
                     
             if issues:
-                print(f"\n⚠️ Potential Issues Found:")
+                print(f"\n[INTERRUPTED] Potential Issues Found:")
                 for issue in issues:
                     print(f"  • {issue}")
             else:
-                print(f"\n✅ No obvious issues detected in cash collections.")
+                print(f"\n[SUCCESS] No obvious issues detected in cash collections.")
                 
         except Exception as e:
             self.print_error(f"Error verifying cash collections: {str(e)}")
@@ -311,7 +311,7 @@ class AuditorStandalone:
                 input("Press Enter to continue...")
                 return
                 
-            print(f"📦 Recent Orders ({len(orders)} records):")
+            print(f"[ORDER] Recent Orders ({len(orders)} records):")
             print("-" * 100)
             print(f"{'Order ID':<20} {'Customer ID':<15} {'Amount':<12} {'Status':<15} {'Date':<20}")
             print("-" * 100)
@@ -330,7 +330,7 @@ class AuditorStandalone:
             completed_orders = [o for o in orders if o.get('status') == 'COMPLETED']
             pending_orders = [o for o in orders if o.get('status') == 'PENDING']
             
-            print(f"\n📊 Order Verification Summary:")
+            print(f"\n[TRACK] Order Verification Summary:")
             print(f"  • Total Orders: {len(orders)}")
             print(f"  • Completed Orders: {len(completed_orders)}")
             print(f"  • Pending Orders: {len(pending_orders)}")
@@ -346,11 +346,11 @@ class AuditorStandalone:
                     anomalies.append(f"High value order: {order.get('orderId')} - {order.get('totalAmount')}")
                     
             if anomalies:
-                print(f"\n⚠️ Anomalies Detected:")
+                print(f"\n[INTERRUPTED] Anomalies Detected:")
                 for anomaly in anomalies:
                     print(f"  • {anomaly}")
             else:
-                print(f"\n✅ No anomalies detected in order transactions.")
+                print(f"\n[SUCCESS] No anomalies detected in order transactions.")
                 
         except Exception as e:
             self.print_error(f"Error verifying order transactions: {str(e)}")
@@ -362,13 +362,13 @@ class AuditorStandalone:
         while True:
             self.clear_screen()
             self.print_header("COMPLIANCE CHECKING")
-            print("1. 🔍 Audit Trail Review")
+            print("1. [AUDIT] Audit Trail Review")
             print("2. 👥 User Access Review")
-            print("3. 📦 Inventory Compliance")
-            print("4. 💰 Financial Compliance")
-            print("5. 🔙 Back to Main Menu")
+            print("3. [ORDER] Inventory Compliance")
+            print("4. [PRICE] Financial Compliance")
+            print("5. [BACK] Back to Main Menu")
             
-            choice = input("\n🎯 Select operation (1-5): ").strip()
+            choice = input("\n[TARGET] Select operation (1-5): ").strip()
             
             if choice == '1':
                 self.audit_trail_review()
@@ -399,7 +399,7 @@ class AuditorStandalone:
                 input("Press Enter to continue...")
                 return
                 
-            print(f"🔍 Recent Audit Logs ({len(audit_logs)} records):")
+            print(f"[AUDIT] Recent Audit Logs ({len(audit_logs)} records):")
             print("-" * 120)
             print(f"{'Audit ID':<25} {'User ID':<15} {'Action':<20} {'Entity ID':<20} {'Timestamp':<20}")
             print("-" * 120)
@@ -423,12 +423,12 @@ class AuditorStandalone:
                 action_counts[action] = action_counts.get(action, 0) + 1
                 user_counts[user] = user_counts.get(user, 0) + 1
                 
-            print(f"\n📊 Audit Trail Analysis:")
+            print(f"\n[TRACK] Audit Trail Analysis:")
             print(f"  • Total Audit Events: {len(audit_logs)}")
             print(f"  • Unique Actions: {len(action_counts)}")
             print(f"  • Active Users: {len(user_counts)}")
             
-            print(f"\n🔍 Most Common Actions:")
+            print(f"\n[AUDIT] Most Common Actions:")
             sorted_actions = sorted(action_counts.items(), key=lambda x: x[1], reverse=True)
             for action, count in sorted_actions[:5]:
                 print(f"  • {action}: {count} times")
@@ -445,11 +445,11 @@ class AuditorStandalone:
                     suspicious_patterns.append(f"High activity user: {user} ({count} actions)")
                     
             if suspicious_patterns:
-                print(f"\n⚠️ Suspicious Patterns Detected:")
+                print(f"\n[INTERRUPTED] Suspicious Patterns Detected:")
                 for pattern in suspicious_patterns:
                     print(f"  • {pattern}")
             else:
-                print(f"\n✅ No suspicious patterns detected in audit trail.")
+                print(f"\n[SUCCESS] No suspicious patterns detected in audit trail.")
                 
         except Exception as e:
             self.print_error(f"Error reviewing audit trail: {str(e)}")
@@ -461,13 +461,13 @@ class AuditorStandalone:
         while True:
             self.clear_screen()
             self.print_header("INVENTORY VERIFICATION")
-            print("1. 📦 Verify Stock Levels")
-            print("2. 🔍 Check Product Accuracy")
-            print("3. 📊 Inventory Reconciliation")
-            print("4. ⚠️ Flag Discrepancies")
-            print("5. 🔙 Back to Main Menu")
+            print("1. [ORDER] Verify Stock Levels")
+            print("2. [AUDIT] Check Product Accuracy")
+            print("3. [TRACK] Inventory Reconciliation")
+            print("4. [INTERRUPTED] Flag Discrepancies")
+            print("5. [BACK] Back to Main Menu")
             
-            choice = input("\n🎯 Select operation (1-5): ").strip()
+            choice = input("\n[TARGET] Select operation (1-5): ").strip()
             
             if choice == '1':
                 self.verify_stock_levels()
@@ -498,7 +498,7 @@ class AuditorStandalone:
                 input("Press Enter to continue...")
                 return
                 
-            print(f"📦 Stock Level Verification ({len(stock_levels)} records):")
+            print(f"[ORDER] Stock Level Verification ({len(stock_levels)} records):")
             print("-" * 100)
             print(f"{'Product ID':<20} {'Location':<20} {'Available':<12} {'Reserved':<12} {'Damaged':<12}")
             print("-" * 100)
@@ -517,7 +517,7 @@ class AuditorStandalone:
             total_reserved = sum(stock.get('reservedStock', 0) for stock in stock_levels)
             total_damaged = sum(stock.get('damagedStock', 0) for stock in stock_levels)
             
-            print(f"\n📊 Stock Verification Summary:")
+            print(f"\n[TRACK] Stock Verification Summary:")
             print(f"  • Total Stock Records: {len(stock_levels)}")
             print(f"  • Total Available Stock: {total_available}")
             print(f"  • Total Reserved Stock: {total_reserved}")
@@ -533,11 +533,11 @@ class AuditorStandalone:
                     issues.append(f"High damaged stock: {stock.get('productId')} at {stock.get('location')}")
                     
             if issues:
-                print(f"\n⚠️ Stock Issues Detected:")
+                print(f"\n[INTERRUPTED] Stock Issues Detected:")
                 for issue in issues:
                     print(f"  • {issue}")
             else:
-                print(f"\n✅ No stock issues detected.")
+                print(f"\n[SUCCESS] No stock issues detected.")
                 
         except Exception as e:
             self.print_error(f"Error verifying stock levels: {str(e)}")
@@ -549,13 +549,13 @@ class AuditorStandalone:
         while True:
             self.clear_screen()
             self.print_header("REPORT GENERATION")
-            print("1. 📊 Compliance Report")
-            print("2. 💰 Financial Report")
-            print("3. 📦 Inventory Report")
+            print("1. [TRACK] Compliance Report")
+            print("2. [PRICE] Financial Report")
+            print("3. [ORDER] Inventory Report")
             print("4. 👥 User Activity Report")
-            print("5. 🔙 Back to Main Menu")
+            print("5. [BACK] Back to Main Menu")
             
-            choice = input("\n🎯 Select operation (1-5): ").strip()
+            choice = input("\n[TARGET] Select operation (1-5): ").strip()
             
             if choice == '1':
                 self.generate_compliance_report()
@@ -619,12 +619,12 @@ class AuditorStandalone:
             self.reports_table.put_item(Item=report_data)
             
             # Display report
-            print(f"📊 Compliance Report Generated:")
+            print(f"[TRACK] Compliance Report Generated:")
             print(f"  • Report ID: {report_id}")
             print(f"  • Generated By: {self.current_user.get('name', 'Unknown')}")
             print(f"  • Generated At: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
             
-            print(f"\n📈 Compliance Metrics:")
+            print(f"\n[REPORT] Compliance Metrics:")
             print(f"  • Total Audit Events: {len(audit_logs)}")
             print(f"  • Total Users: {len(users)}")
             print(f"  • Active Users: {len([u for u in users if u.get('isActive', False)])}")
@@ -634,7 +634,7 @@ class AuditorStandalone:
             print(f"  • Completed Collections: {len([c for c in collections if c.get('status') == 'COMPLETED'])}")
             print(f"  • Compliance Score: 95.5%")
             
-            print(f"\n✅ Report saved to database successfully!")
+            print(f"\n[SUCCESS] Report saved to database successfully!")
             
         except Exception as e:
             self.print_error(f"Error generating compliance report: {str(e)}")
@@ -646,13 +646,13 @@ class AuditorStandalone:
         while True:
             self.clear_screen()
             self.print_header("PROCESS REVIEW")
-            print("1. 🔄 Review Order Process")
-            print("2. 📦 Review Inventory Process")
-            print("3. 💰 Review Payment Process")
+            print("1. [FLOW] Review Order Process")
+            print("2. [ORDER] Review Inventory Process")
+            print("3. [PRICE] Review Payment Process")
             print("4. 👥 Review User Process")
-            print("5. 🔙 Back to Main Menu")
+            print("5. [BACK] Back to Main Menu")
             
-            choice = input("\n🎯 Select operation (1-5): ").strip()
+            choice = input("\n[TARGET] Select operation (1-5): ").strip()
             
             if choice == '1':
                 self.review_order_process()
@@ -673,13 +673,13 @@ class AuditorStandalone:
         while True:
             self.clear_screen()
             self.print_header("AUDIT ANALYTICS")
-            print("1. 📊 Activity Analytics")
-            print("2. ⚠️ Risk Assessment")
-            print("3. 📈 Trend Analysis")
-            print("4. 🔍 Anomaly Detection")
-            print("5. 🔙 Back to Main Menu")
+            print("1. [TRACK] Activity Analytics")
+            print("2. [INTERRUPTED] Risk Assessment")
+            print("3. [REPORT] Trend Analysis")
+            print("4. [AUDIT] Anomaly Detection")
+            print("5. [BACK] Back to Main Menu")
             
-            choice = input("\n🎯 Select operation (1-5): ").strip()
+            choice = input("\n[TARGET] Select operation (1-5): ").strip()
             
             if choice == '1':
                 self.activity_analytics()
@@ -854,7 +854,7 @@ class AuditorStandalone:
             self.show_main_menu()
             
         except KeyboardInterrupt:
-            self.print_info("\n⚠️  System interrupted by user")
+            self.print_info("\n[INTERRUPTED]  System interrupted by user")
         except Exception as e:
             self.print_error(f"Unexpected error: {str(e)}")
         finally:

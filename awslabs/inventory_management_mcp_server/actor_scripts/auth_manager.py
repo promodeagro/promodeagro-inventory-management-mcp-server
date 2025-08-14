@@ -20,29 +20,29 @@ class AuthManager:
     def print_header(self, title: str):
         """Print formatted header"""
         print("\n" + "=" * 60)
-        print(f"🎭 {title}")
+        print(f"[ORCHESTRATE] {title}")
         print("=" * 60)
         
     def print_success(self, message: str):
         """Print success message"""
-        print(f"✅ {message}")
+        print(f"[SUCCESS] {message}")
         
     def print_error(self, message: str):
         """Print error message"""
-        print(f"❌ {message}")
+        print(f"[ERROR] {message}")
         
     def print_info(self, message: str):
         """Print info message"""
-        print(f"ℹ️  {message}")
+        print(f"[INFO]  {message}")
         
     def test_aws_connection(self) -> bool:
         """Test AWS connection and credentials"""
         try:
             sts = boto3.client('sts', region_name=self.region_name)
             identity = sts.get_caller_identity()
-            print(f"🔐 AWS Identity: {identity['Arn']}")
-            print(f"🏢 AWS Account: {identity['Account']}")
-            print(f"🌍 AWS Region: {self.region_name}")
+            print(f"[SECURE] AWS Identity: {identity['Arn']}")
+            print(f"[ACCOUNT] AWS Account: {identity['Account']}")
+            print(f"[REGION] AWS Region: {self.region_name}")
             return True
         except Exception as e:
             self.print_error(f"AWS connection failed: {str(e)}")
@@ -56,11 +56,11 @@ class AuthManager:
         if not self.test_aws_connection():
             return False
             
-        print("\n🔐 Please enter your credentials:")
+        print("\n[SECURE] Please enter your credentials:")
         
         # Get username and password
-        username = input("👤 Username: ").strip()
-        password = getpass.getpass("🔒 Password: ").strip()
+        username = input("[USER] Username: ").strip()
+        password = getpass.getpass("[PASSWORD] Password: ").strip()
         
         if not username or not password:
             self.print_error("Username and password are required")
@@ -255,7 +255,7 @@ class AuthManager:
             self.print_success("Demo users created successfully!")
             self.print_info("You can now login with any of these credentials:")
             for user in demo_users:
-                print(f"   👤 {user['userId']} / {user['password']} ({user['role']})")
+                print(f"   [USER] {user['userId']} / {user['password']} ({user['role']})")
                 
         except Exception as e:
             self.print_error(f"Error creating demo users: {str(e)}")
