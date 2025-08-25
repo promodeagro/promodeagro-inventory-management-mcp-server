@@ -186,6 +186,16 @@ class CompleteFlowOrchestrator:
                 
                 step.output = f"Script {script_name} started and authenticated successfully"
                 
+                # Extract data from script output during startup
+                try:
+                    script_output = self.controller.caller.get_output(script_id, timeout=2.0)
+                    if script_output:
+                        # Create a result-like structure for data extraction
+                        startup_result = {"output": script_output, "success": True}
+                        self._extract_flow_data(startup_result, execution, step)
+                except Exception as e:
+                    self.logger.debug(f"[DEBUG] Could not get script output for data extraction: {e}")
+                
             else:
                 # Use existing script instance
                 script_id = execution.script_instances.get(script_name)
@@ -202,6 +212,15 @@ class CompleteFlowOrchestrator:
                     
                     # Extract important data (like order_id, delivery_id)
                     self._extract_flow_data(result, execution, step)
+                    
+                    # Also try to get fresh script output for additional data extraction
+                    try:
+                        fresh_output = self.controller.caller.get_output(script_id, timeout=2.0)
+                        if fresh_output:
+                            fresh_result = {"output": fresh_output, "success": True}
+                            self._extract_flow_data(fresh_result, execution, step)
+                    except Exception as e:
+                        self.logger.debug(f"[DEBUG] Could not get fresh script output: {e}")
                 else:
                     step.status = "FAILED"
                     step.error = f"Action failed: {result.get('errors', [])}"
@@ -305,23 +324,52 @@ class CompleteFlowOrchestrator:
     
     def _extract_flow_data(self, result: Dict[str, Any], execution: RealFlowExecution, step: FlowStep):
         """Extract important data from step results"""
-        output_text = " ".join(result.get("output", []))
+        import re
         
-        # Extract order ID
-        if "order" in step.action.lower() and "ORD-" in output_text:
-            import re
-            order_match = re.search(r'ORD-\d{8}-\d{6}', output_text)
-            if order_match:
-                execution.order_id = order_match.group()
-                self.logger.info(f"[CLIPBOARD] Extracted Order ID: {execution.order_id}")
+        # Handle both list and string outputs
+        output_data = result.get("output", [])
+        if isinstance(output_data, list):
+            output_text = " ".join(output_data)
+        else:
+            output_text = str(output_data)
         
-        # Extract delivery ID
-        if "delivery" in step.action.lower() and "DEL-" in output_text:
-            import re
-            delivery_match = re.search(r'DEL-\d{8}-\d{6}', output_text)
-            if delivery_match:
-                execution.delivery_id = delivery_match.group()
-                self.logger.info(f"[DELIVERY] Extracted Delivery ID: {execution.delivery_id}")
+        # Extract order ID - look for various patterns
+        if not execution.order_id:
+            # Look for ORD- pattern
+            order_patterns = [
+                r'ORD-\d{8}-\d{6}',  # ORD-20250814-223045
+                r'Order ID[:\s]+([A-Z0-9-]+)',  # Order ID: ORD-20250814-223045
+                r'order[:\s]+([A-Z0-9-]+)',     # order: ORD-20250814-223045
+            ]
+            
+            for pattern in order_patterns:
+                order_match = re.search(pattern, output_text, re.IGNORECASE)
+                if order_match:
+                    if pattern.startswith('ORD-'):
+                        execution.order_id = order_match.group()
+                    else:
+                        execution.order_id = order_match.group(1)
+                    self.logger.info(f"[ORDER] Extracted Order ID: {execution.order_id}")
+                    break
+        
+        # Extract delivery ID - look for various patterns
+        if not execution.delivery_id:
+            delivery_patterns = [
+                r'DEL-\d{8}-\d{6}',  # DEL-20250814-223045
+                r'DELIVERY-\d{8}-\d{6}',  # DELIVERY-20250814-223045
+                r'Delivery ID[:\s]+([A-Z0-9-]+)',  # Delivery ID: DEL-20250814-223045
+                r'delivery[:\s]+([A-Z0-9-]+)',     # delivery: DEL-20250814-223045
+            ]
+            
+            for pattern in delivery_patterns:
+                delivery_match = re.search(pattern, output_text, re.IGNORECASE)
+                if delivery_match:
+                    if pattern.startswith(('DEL-', 'DELIVERY-')):
+                        execution.delivery_id = delivery_match.group()
+                    else:
+                        execution.delivery_id = delivery_match.group(1)
+                    self.logger.info(f"[DELIVERY] Extracted Delivery ID: {execution.delivery_id}")
+                    break
     
     def run_complete_real_flow(self, customer_id: str = "CUST001") -> RealFlowExecution:
         """Run complete end-to-end flow with real script interactions"""
