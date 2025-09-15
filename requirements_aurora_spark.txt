@@ -1,0 +1,31 @@
+# Aurora Spark Theme - Essential Dependencies
+# Minimal requirements for the multi-portal SaaS inventory management system
+
+# Core Python packages
+python-dateutil>=2.8.0
+
+# AWS SDK for DynamoDB
+boto3>=1.38.5
+botocore>=1.38.5
+
+# Authentication & Security (Essential for portals)
+PyJWT>=2.8.0
+
+# Data processing
+pandas>=1.5.0
+
+# JSON processing
+jsonschema>=4.0.0
+
+# HTTP requests
+requests>=2.31.0
+
+# Environment management
+python-dotenv>=1.0.0
+
+# Development tools (optional)
+black>=23.0.0
+pytest>=7.0.0
+
+# Note: Additional packages can be added as needed for specific features
+# This minimal set ensures the core Aurora Spark Theme functionality works

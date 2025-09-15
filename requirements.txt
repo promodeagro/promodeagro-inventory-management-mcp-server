@@ -9,6 +9,21 @@ pydantic>=2.10.6
 boto3>=1.38.5
 botocore>=1.38.5
 
+# Aurora Spark Theme - Authentication & Security
+PyJWT>=2.8.0
+bcrypt>=4.0.0
+passlib>=1.7.4
+cryptography>=41.0.0
+
+# Aurora Spark Theme - Web Framework & API
+fastapi>=0.104.0
+uvicorn>=0.24.0
+python-multipart>=0.0.6
+python-jose[cryptography]>=3.3.0
+
+# Aurora Spark Theme - Session Management
+redis>=5.0.0
+
 # Database connections (for future integrations)
 sqlalchemy>=2.0.0
 psycopg[binary]>=3.0
@@ -33,6 +48,28 @@ python-dateutil>=2.8.0
 
 # HTTP requests for API integrations
 requests>=2.31.0
+
+# Aurora Spark Theme - Additional Dependencies
+python-dotenv>=1.0.0
+email-validator>=2.1.0
+phonenumbers>=8.13.0
+pillow>=10.0.0
+
+# Aurora Spark Theme - Real-time Features
+websockets>=12.0
+python-socketio>=5.10.0
+
+# Aurora Spark Theme - Task Queue & Background Jobs
+celery>=5.3.0
+
+# Aurora Spark Theme - File Processing
+openpyxl>=3.1.0
+xlsxwriter>=3.1.0
+reportlab>=4.0.0
+
+# Aurora Spark Theme - Monitoring & Logging
+prometheus-client>=0.19.0
+structlog>=23.2.0
 
 # Development dependencies (optional)
 black>=23.0.0
